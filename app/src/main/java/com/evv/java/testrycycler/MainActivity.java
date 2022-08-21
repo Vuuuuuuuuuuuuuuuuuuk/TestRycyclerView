@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     LinkedList<Exemplar> list;
     ImageView btnBack, btnShar, btnMenu;
 
+    boolean checked = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,8 +41,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onCheck() {
-                tvOut.setText("new length is : " + list.size());
+            public void onCheck(boolean isChecked) {
+                checked = isChecked;
+                if(checked){
+                    btnShar.setVisibility(View.VISIBLE);
+                    btnMenu.setImageResource(R.drawable.ic_baseline_menu_open_24);
+                    tvOut.setText("chosen : 0");
+                }else{
+                    btnShar.setVisibility(View.INVISIBLE);
+                    btnMenu.setImageResource(R.drawable.ic_baseline_menu_24);
+                    tvOut.setText("");
+                }
+            }
+
+            @Override
+            public void setText(int val) {
+                tvOut.setText("chosen : "+val );
             }
         };
 
@@ -60,7 +76,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.image_view_back:
+                if(checked) adapter.Undo();
+                break;
             case R.id.image_view_shar:
+                //TODO
             case R.id.image_view_menu:
                 break;
         }

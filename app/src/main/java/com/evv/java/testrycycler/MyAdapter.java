@@ -14,7 +14,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
 
     interface Listener1{
         void onClick( int index );
-        void onCheck();
+        void onCheck(boolean isChecked);
+
+        void setText(int val);
     }
 
     private LinkedList<Exemplar> list;
@@ -51,7 +53,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
                         checked[id] = 0;
                     }
 
-                    holder.item_image_view_checked.setVisibility(checked[id] == 0 ? View.INVISIBLE : View.VISIBLE);
+                    listener1.setText(tot);
+                    holder.item_image_view_checked.setImageResource(checked[id] == 0 ?
+                            R.drawable.ic_baseline_check_box_outline_blank_24 : R.drawable.ic_baseline_check_box_24);
                 }
                 else listener1.onClick(holder.getAdapterPosition());
             }
@@ -62,7 +66,8 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
             public boolean onLongClick(View v) {
                 if(!isLongChecked){
                     isLongChecked = true;
-                    //TODO
+                    listener1.onCheck(true);
+                    notifyDataSetChanged();
                 }
 
                 return true;
@@ -76,8 +81,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
     public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         holder.item_image_view.setImageResource(R.drawable.ic_launcher_foreground);
         holder.item_text_view.setText(list.get(position).text);
-        holder.item_image_view_checked.setImageResource(R.drawable.ic_baseline_check_circle_24);
-        holder.item_image_view_checked.setVisibility(checked[position] == 0 ? View.INVISIBLE : View.VISIBLE);
+        holder.item_image_view_checked.setImageResource(checked[position] == 0 ?
+          R.drawable.ic_baseline_check_box_outline_blank_24 : R.drawable.ic_baseline_check_box_24);
+        holder.item_image_view_checked.setVisibility(isLongChecked ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -106,8 +112,18 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
                 if(checked[i] == 1) list.remove(i);
 
             checked = new int[list.size()];
-            listener1.onCheck();
+            //listener1.onCheck();
             notifyDataSetChanged();
         }
+    }
+
+    public void Undo() {
+        isLongChecked = false;
+
+        tot = 0;
+        for(int i = checked.length - 1; i >= 0; i--) checked[i] = 0;
+
+        listener1.onCheck(false);
+        notifyDataSetChanged();
     }
 }
