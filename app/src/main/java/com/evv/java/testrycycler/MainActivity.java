@@ -1,8 +1,11 @@
 package com.evv.java.testrycycler;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MyAdapter adapter;
     LinkedList<Exemplar> list;
     ImageView btnBack, btnShar, btnMenu;
+
+    PopupMenu menu1, menu2;
 
     boolean checked = false;
 
@@ -70,6 +75,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnBack.setOnClickListener(this);
         btnShar.setOnClickListener(this);
         btnMenu.setOnClickListener(this);
+
+        menu1 = new PopupMenu(this, btnMenu);
+        menu2 = new PopupMenu(this, btnMenu);
+
+        menu1.inflate(R.menu.menu1);
+        menu2.inflate(R.menu.menu2);
+
+        menu1.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item1_1:
+                        Toast.makeText(MainActivity.this, "Menu 1 item 1", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
+
+        menu2.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.item1_2:
+                        Toast.makeText(MainActivity.this, "Menu 2 item 1", Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.item2_2:
+                        Toast.makeText(MainActivity.this, "Menu 2 item 2", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -81,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.image_view_shar:
                 //TODO
             case R.id.image_view_menu:
+                if(checked) menu2.show();
+                else menu1.show();
                 break;
         }
     }
