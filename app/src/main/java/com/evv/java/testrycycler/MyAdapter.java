@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.LinkedList;
@@ -125,5 +126,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
 
         listener1.onCheck(false);
         notifyDataSetChanged();
+    }
+
+    public void Swap(int a, int b){
+        int x = checked[a];
+        checked[a] = checked[b];
+        checked[b] = x;
     }
 }

@@ -6,11 +6,14 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -108,6 +111,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
             }
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                if(checked) {
+                    int a = viewHolder.getAdapterPosition();
+                    int b = target.getAdapterPosition();
+
+                    Collections.swap(list,a,b);
+                    adapter.Swap(a,b);
+                    adapter.notifyItemMoved(a,b);
+
+                    return true;
+                }
+
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                if(checked){
+                   list.remove(viewHolder.getAdapterPosition());
+                   adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
+                }
+            }
+        }).attachToRecyclerView(recyclerView);
     }
 
     @Override
