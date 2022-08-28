@@ -1,6 +1,8 @@
 package com.evv.java.testrycycler;
 
+import android.graphics.Canvas;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -16,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.Collections;
 import java.util.LinkedList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener {
 
     TextView tvOut;
     RecyclerView recyclerView;
@@ -112,29 +114,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP|ItemTouchHelper.DOWN, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return checked ? makeMovementFlags(ItemTouchHelper.UP|ItemTouchHelper.DOWN, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT)
+                  : makeMovementFlags(0,0);
+            }
+
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                if(checked) {
-                    int a = viewHolder.getAdapterPosition();
-                    int b = target.getAdapterPosition();
+                int a = viewHolder.getAdapterPosition();
+                int b = target.getAdapterPosition();
 
-                    Collections.swap(list,a,b);
-                    adapter.Swap(a,b);
-                    adapter.notifyItemMoved(a,b);
+                Collections.swap(list, a, b);
+                adapter.Swap(a,b);
+                adapter.notifyItemMoved(a, b);
 
-                    return true;
+                return true;
+            }
+
+            @Override
+            public float getSwipeThreshold(@NonNull RecyclerView.ViewHolder viewHolder) {
+                return 0.2f;
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if(actionState == ItemTouchHelper.ACTION_STATE_SWIPE){
+                    float w = viewHolder.itemView.getWidth();
+                    float al = 1.0f - Math.abs(dX)/w * 3;
+
+                    viewHolder.itemView.setAlpha(al);
+                    viewHolder.itemView.setTranslationX(dX);
                 }
-
-                return false;
+                else super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                if(checked){
-                   list.remove(viewHolder.getAdapterPosition());
-                   adapter.notifyItemRemoved(viewHolder.getAdapterPosition());
-                }
+                list.remove(viewHolder.getAdapterPosition());
+                adapter.DeleteOne(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(recyclerView);
     }
@@ -152,5 +171,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 else menu1.show();
                 break;
         }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
     }
 }

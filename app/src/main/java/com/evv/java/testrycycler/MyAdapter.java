@@ -9,9 +9,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyHolder> {
+
+    public void DeleteOne(int id) {
+       tot -= checked[id];
+
+       int new_checked[] = new int[checked.length - 1];
+       Arrays.copyOfRange(checked, 0,id);
+       Arrays.copyOfRange(checked,id+1, checked.length);
+       checked = new_checked;
+       notifyItemRemoved(id);
+    }
 
     interface Listener1{
         void onClick( int index );
